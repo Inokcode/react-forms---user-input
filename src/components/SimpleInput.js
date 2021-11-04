@@ -13,6 +13,9 @@ const SimpleInput = (props) => {
   //
   const formSubmissionHandler = (e) => {
     e.preventDefault();
+    //
+    setEnteredNameTouched(true);
+    //
     if (enteredName.trim() === '') {
       setEnteredNameIsValid(false);
       return;
@@ -25,11 +28,11 @@ const SimpleInput = (props) => {
     // nameInputChangHandler.current.value ="" this is not work bcz we dont direclt manipulate dom
   };
   //
-  // const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
   //
-  const nameInputClasses = enteredNameIsValid
-    ? 'form-control'
-    : 'form-control invalid';
+  const nameInputClasses = nameInputIsInvalid
+    ? 'form-control invalid'
+    : 'form-control';
   //
   return (
     <form onSubmit={formSubmissionHandler}>
@@ -43,7 +46,7 @@ const SimpleInput = (props) => {
           value={enteredName}
         />
       </div>
-      {!enteredNameIsValid && (
+      {nameInputIsInvalid && (
         <p className="error-text">Name must not be empty.</p>
       )}
 
