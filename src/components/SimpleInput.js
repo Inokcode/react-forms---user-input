@@ -1,8 +1,11 @@
 import { useRef, useState } from 'react';
 
 const SimpleInput = (props) => {
-  const [enteredName, setEnteredName] = useState('');
   const nameInputRef = useRef();
+  const [enteredName, setEnteredName] = useState('');
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
+  //
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
   //
   const nameInputChangHandler = (e) => {
     setEnteredName(e.target.value);
@@ -10,6 +13,11 @@ const SimpleInput = (props) => {
   //
   const formSubmissionHandler = (e) => {
     e.preventDefault();
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
+      return;
+    }
+    setEnteredNameIsValid(true);
     console.log(enteredName);
     const enteredValue = nameInputRef.current.value;
     console.log({ enteredValue });
@@ -17,9 +25,15 @@ const SimpleInput = (props) => {
     // nameInputChangHandler.current.value ="" this is not work bcz we dont direclt manipulate dom
   };
   //
+  // const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+  //
+  const nameInputClasses = enteredNameIsValid
+    ? 'form-control'
+    : 'form-control invalid';
+  //
   return (
     <form onSubmit={formSubmissionHandler}>
-      <div className="form-control">
+      <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
           type="text"
@@ -29,6 +43,10 @@ const SimpleInput = (props) => {
           value={enteredName}
         />
       </div>
+      {!enteredNameIsValid && (
+        <p className="error-text">Name must not be empty.</p>
+      )}
+
       <div className="form-actions">
         <button>Submit</button>
       </div>
