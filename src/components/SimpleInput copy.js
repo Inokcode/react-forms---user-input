@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const SimpleInput = (props) => {
+  const nameInputRef = useRef();
   const [enteredName, setEnteredName] = useState('');
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
   //
   const [enteredNameTouched, setEnteredNameTouched] = useState(false);
-  //
-  const enteredNameIsValid = enteredName.trim() !== '';
-  //
-  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
   //
   const nameInputChangHandler = (e) => {
     setEnteredName(e.target.value);
+    // e.target.value used in if bcz if not it get old state due to above setEnteredName(e.target.value) line
+    if (e.target.value.trim() !== '') {
+      setEnteredNameIsValid(true);
+    }
   };
 
   //
   const nameInputBlurHandler = (e) => {
     setEnteredNameTouched(true);
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
+      return;
+    }
   };
   //
   const formSubmissionHandler = (e) => {
@@ -23,16 +30,19 @@ const SimpleInput = (props) => {
     //
     setEnteredNameTouched(true);
     //
-    if (!enteredNameIsValid) {
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
       return;
     }
-
+    setEnteredNameIsValid(true);
     console.log(enteredName);
-
-    setEnteredName('');
-    setEnteredNameTouched(false);
+    const enteredValue = nameInputRef.current.value;
+    console.log({ enteredValue });
+    setEnteredName(''); //you cant do this in useRef 2
+    // nameInputChangHandler.current.value ="" this is not work bcz we dont direclt manipulate dom
   };
-
+  //
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
   //
   const nameInputClasses = nameInputIsInvalid
     ? 'form-control invalid'
@@ -46,6 +56,7 @@ const SimpleInput = (props) => {
           type="text"
           id="name"
           onChange={nameInputChangHandler}
+          ref={nameInputRef}
           value={enteredName}
           onBlur={nameInputBlurHandler}
         />
